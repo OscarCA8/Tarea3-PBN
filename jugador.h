@@ -26,7 +26,11 @@ public:
     Jugador(int startX, int startY);
 
     void mover(char direccionInput);
+<<<<<<< HEAD
     void recibirDaño(int cantidad);
+=======
+    void recibirDanio(int cantidad);
+>>>>>>> cpps de hs creados
     void curar(int cantidad);
     void usarHabilidad();
     void atacar();
