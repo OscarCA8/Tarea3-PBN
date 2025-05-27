@@ -184,7 +184,7 @@ void Jugador::entrarSalaJefe() {
 
 void Jugador::ganarJuego() {
     haGanado = true;
-    cout << "FELICIDADES!! ¡Has ganado!" << endl;
+    cout << "FELICIDADES!! Has ganado!" << endl;
     cout << "Estadísticas finales:" << endl;
     cout << "- Pasos dados: " << pasos << endl;
     cout << "- Enemigos derrotados: " << enemigosDerrotados << endl;
