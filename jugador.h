@@ -26,7 +26,7 @@ public:
     Jugador(int startX, int startY);
 
     void mover(char direccionInput);
-    void recibirDanio(int cantidad);
+    void recibirDaño(int cantidad);
     void curar(int cantidad);
     void usarHabilidad();
     void atacar();
