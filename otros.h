@@ -3,7 +3,7 @@
 #include <utility>
 using namespace std;
 
-struct EnemigoData {
+struct DataDelEnemigo {
     int y;
     int x;
     vector<pair<int, int>> movimientos;
@@ -13,7 +13,7 @@ struct EnemigoData {
     int frecuenciaAtaque;
 };
 
-struct BossData {
+struct DataDelBoss {
     string nombre;
     int y;
     int x;
@@ -24,27 +24,27 @@ struct BossData {
     int frecuenciaAtaque;
 };
 
-struct MazmorraData {
+struct DataDeMazmorra {
     int filas;
     int columnas;
     vector<vector<char>> mapa;
 };
 
-struct SalaJefeData {
+struct DataDeSaladelJefe {
     int filas;
     int columnas;
     vector<vector<char>> mapa;
 };
 
 struct EnemigosCargados {
-    vector<EnemigoData> enemigosMazmorra;
-    BossData jefe;
+    vector<DataDelEnemigo> enemigosMazmorra;
+    DataDelBoss jefe;
     vector<EnemigoData> enemigosJefe;
 };
 
 struct MazmorrasCargadas {
-    vector<MazmorraData> mazmorras;
-    vector<SalaJefeData> salasJefe;
+    vector<DataDeMazmorra> mazmorras;
+    vector<DataDeSaladelJefe> salasJefe;
 };
 
 class Otros {
