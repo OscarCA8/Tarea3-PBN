@@ -1,3 +1,5 @@
+#ifndef SALAJEFE_H
+#define SALAJEFE_H
 #include <vector>
 #include <string>
 #include "Enemigo.hpp"
@@ -25,3 +27,4 @@ public:
     void modificarCelda(int x, int y, char simbolo);
     pair<int, int> getEntrada() const;
 };
+#endif

@@ -1,3 +1,5 @@
+#ifndef MAZMORRA_H
+#define MAZMORRA_H
 #include <vector>
 #include <string>
 #include "Enemigo.hpp"
@@ -22,3 +24,4 @@ public:
     int getFilas() const;
     int getColumnas() const;
 };
+#endif

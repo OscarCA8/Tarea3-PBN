@@ -85,7 +85,7 @@ void Enemigo::resetear() {
 	y = yOriginal;
 	pasoActual = 0;
 	atacando = false;
-	recibiendoDalo = false;
+	recibiendoDaño = false;
 	turnosDesdeUltimoAtaque = 0;
 }
 

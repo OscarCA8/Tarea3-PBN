@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #include <iostream>
 #include "jugador.h"
 using namespace std;
@@ -111,45 +110,6 @@ void Jugador::curar(int cantidad) {
     }
     
     cout << "Link se curó " << cantidad << " puntos de vida. Vida actual: " << vida << endl;
-=======
-#include "jugador.h"
-
-Jugador::Jugador(
-	int startX, 
-	int startY
-)
-	:x(),
-	y(),
-	vida(),
-	daño(),
-	rango(),
-	habilidad(),
-	direccion(),
-	recibiendoDaño(),
-	llaves(),
-	llavesJefe(),
-	pasos(),
-	cofresAbiertos(),
-	puertasAbiertas(),
-	enemigosDerrotados(),
-	numBombas(),
-	usandoHabilidad(),
-	atacando(),
-	enSalaJefe(),
-	haGanado()
-{}
-
-void Jugador::mover(char direccionInput) {
-
-}
-
-void Jugador::recibirDanio(int cantidad) {
-
-}
-
-void Jugador::curar(int cantidad) {
-
->>>>>>> cpps de hs creados
 }
 
 void Jugador::usarHabilidad() {
@@ -157,7 +117,6 @@ void Jugador::usarHabilidad() {
 }
 
 void Jugador::atacar() {
-<<<<<<< HEAD
     atacando = true;
     cout << "Link ataca hacia " << direccion << " con su espada (10 de daño)!" << endl;
     atacando = false;
@@ -234,56 +193,3 @@ void Jugador::ganarJuego() {
     cout << "- Vida final: " << vida << endl;
 
 }
-=======
-
-}
-
-int Jugador::getX() const {
-
-}
-
-int Jugador::getY() const {
-
-}
-
-int Jugador::getVida() const {
-
-}
-
-string Jugador::getDireccion() const {
-
-}
-
-void Jugador::setDireccion(const string& nuevaDir) {
-
-}
-
-void Jugador::recogerLlave() {
-
-}
-
-void Jugador::recogerLlaveJefe() {
-
-}
-
-void Jugador::abrirCofre() {
-
-}
-
-void Jugador::abrirPuerta() {
-
-}
-
-void Jugador::derrotarEnemigo() {
-
-}
-
-void Jugador::entrarSalaJefe() {
-
-}
-
-void Jugador::ganarJuego() {
-
-}
-
->>>>>>> cpps de hs creados

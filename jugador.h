@@ -1,3 +1,5 @@
+#ifndef JUGADOR_H
+#define JUGADOR_H
 #include <string>
 using namespace std;
 
@@ -26,11 +28,7 @@ public:
     Jugador(int startX, int startY);
 
     void mover(char direccionInput);
-<<<<<<< HEAD
     void recibirDaño(int cantidad);
-=======
-    void recibirDanio(int cantidad);
->>>>>>> cpps de hs creados
     void curar(int cantidad);
     void usarHabilidad();
     void atacar();
@@ -50,3 +48,4 @@ public:
     void entrarSalaJefe();
     void ganarJuego();
 };
+#endif

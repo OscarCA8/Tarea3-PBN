@@ -1,3 +1,5 @@
+#ifndef ENEMIGO_H
+#define ENEMIGO_H
 #include <vector>
 #include <utility>
 using namespace std;
@@ -34,3 +36,4 @@ public:
     void resetear();
     void forceAtk(); 
 };
+#endif

@@ -1,3 +1,5 @@
+#ifndef boss_h
+#define boss_h
 #include <string>
 #include <vector>
 #include <utility>
@@ -37,3 +39,4 @@ public:
     void forceAtk(); 
     
 };
+#endif

@@ -1,3 +1,5 @@
+#ifndef OTROS_H
+#define OTROS_H
 #include <string>
 #include <vector>
 #include <utility>
@@ -39,7 +41,7 @@ struct DataDeSaladelJefe {
 struct EnemigosCargados {
     vector<DataDelEnemigo> enemigosMazmorra;
     DataDelBoss jefe;
-    vector<EnemigoData> enemigosJefe;
+    vector<DataDelEnemigo> enemigosJefe;
 };
 
 struct MazmorrasCargadas {
@@ -52,3 +54,4 @@ public:
     EnemigosCargados cargarEnemigos(const string& ruta);
     MazmorrasCargadas cargarMazmorras(const string& ruta);
 };
+#endif
