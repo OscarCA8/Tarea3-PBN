@@ -21,7 +21,7 @@ Boss::Boss(
 	patronMovimiento(patron), 
 	pasoActual(),
 	atacando(), 
-	recibiendoDanio(), 
+	recibiendoDaño(), 
 	turnosDesdeUltimoAtaque(),
 	xOriginal(x), 
 	yOriginal(y) 
@@ -47,7 +47,7 @@ void Boss::prepararAtaque() {
 
 void Boss::recibirDaño(int cantidad) {
 	vida -= cantidad;
-	recibiendoDanio = true;
+	recibiendoDaño = true;
 	if (vida < 0) vida = 0;
 }
 
@@ -64,7 +64,7 @@ bool Boss::estaAtacando() const {
 }
 
 bool Boss::estaRecibiendoDaño() const {
-	return recibiendoDanio;
+	return recibiendoDaño;
 }
 
 
@@ -90,7 +90,7 @@ void Boss::resetear() {
 	y = yOriginal;
 	pasoActual = 0;
 	atacando = false;
-	recibiendoDanio = false;
+	recibiendoDaño = false;
 	turnosDesdeUltimoAtaque = 0;
 }
 

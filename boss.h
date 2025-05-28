@@ -15,7 +15,7 @@ private:
     int pasoActual;
     bool atacando;
     int xOriginal, yOriginal;
-    bool recibiendoDanio;
+    bool recibiendoDaño;
     int turnosDesdeUltimoAtaque;
 
 public:
@@ -25,9 +25,15 @@ public:
     void mover();
     void prepararAtaque();
     void recibirDaño(int cantidad);
-
     int getX() const;
     int getY() const;
     bool estaAtacando() const;
     bool estaRecibiendoDaño() const;
+    int getVida() const;
+    int getDaño() const;
+    void setVida(int nuevaVida);
+    void setPosicion(int nuevaX, int nuevaY);
+    void resetear();
+    void forceAtk(); 
+    
 };
