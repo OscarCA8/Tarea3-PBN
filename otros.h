@@ -10,7 +10,7 @@ struct DataDelEnemigo {
     int x;
     vector<pair<int, int>> movimientos;
     int vida;
-    int daño;
+    int dano;
     int rangoAtaque;
     int frecuenciaAtaque;
 };
@@ -21,7 +21,7 @@ struct DataDelBoss {
     int x;
     vector<pair<int, int>> movimientos;
     int vida;
-    int daño;
+    int dano;
     int rangoAtaque;
     int frecuenciaAtaque;
 };
@@ -29,13 +29,13 @@ struct DataDelBoss {
 struct DataDeMazmorra {
     int filas;
     int columnas;
-    vector<vector<char>> mapa;
+    std::vector<std::vector<char>> matriz;
 };
 
 struct DataDeSaladelJefe {
     int filas;
     int columnas;
-    vector<vector<char>> mapa;
+    std::vector<std::vector<char>> matriz;
 };
 
 struct EnemigosCargados {
