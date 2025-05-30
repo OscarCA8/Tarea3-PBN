@@ -4,7 +4,7 @@ EXE=tarea3
 
 ARCHIVOS=main.o jugador.o enemigo.o boss.o mazmorra.o salajefe.o juego.o otros.o
 
-$(EXE): $(OBJS)
+$(EXE): $(ARCHIVOS)
 	$(CC) $(FLAGS) $(ARCHIVOS) -o $(EXE)
 
 main.o: main.cpp
