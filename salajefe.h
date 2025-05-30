@@ -2,11 +2,11 @@
 #define SALAJEFE_H
 #include <vector>
 #include <string>
-#include "Enemigo.hpp"
-#include "Boss.hpp"
+#include "enemigo.h"
+#include "boss.h"
 using namespace std;
 
-class SalaJefe {
+class SalaJefe : public Mazmorra {
 private:
     int filas;
     int columnas;

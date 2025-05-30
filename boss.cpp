@@ -5,7 +5,7 @@ Boss::Boss(
 	int x, 
 	int y, 
 	int vida, 
-	int daño, 
+	int dano, 
 	int rango, 
 	int frecuenciaAtaque,
 	const vector<pair<int, int>>& patron
@@ -15,16 +15,16 @@ Boss::Boss(
 	x(x), 
 	y(y), 
 	vida(vida), 
-	daño(daño), 
+	dano(dano), 
 	rango(rango),
 	frecuenciaAtaque(frecuenciaAtaque), 
 	patronMovimiento(patron), 
 	pasoActual(),
 	atacando(), 
-	recibiendoDaño(), 
-	turnosDesdeUltimoAtaque(),
-	xOriginal(x), 
-	yOriginal(y) 
+	xOriginal(x),
+	yOriginal(y),
+	recibiendoDano(),
+	turnosDesdeUltimoAtaque() 
 {}
 
 void Boss::mover() {
@@ -45,9 +45,9 @@ void Boss::prepararAtaque() {
 	}
 }
 
-void Boss::recibirDaño(int cantidad) {
+void Boss::recibirDano(int cantidad) {
 	vida -= cantidad;
-	recibiendoDaño = true;
+	recibiendoDano = true;
 	if (vida < 0) vida = 0;
 }
 
@@ -59,12 +59,16 @@ int Boss::getY() const {
 	return y;
 }
 
+bool Boss::estaPorAtacar() const {
+    return turnosDesdeUltimoAtaque >= frecuenciaAtaque;
+}
+
 bool Boss::estaAtacando() const {
 	return atacando;
 }
 
-bool Boss::estaRecibiendoDaño() const {
-	return recibiendoDaño;
+bool Boss::estaRecibiendoDano() const {
+	return recibiendoDano;
 }
 
 
@@ -72,8 +76,16 @@ int Boss::getVida() const {
 	return vida;
 }
 
-int Boss::getDaño() const {
-	return daño;
+int Boss::getDano() const {
+	return dano;
+}
+
+int Boss::getXOriginal() const {
+    return xOriginal;
+}
+
+int Boss::getYOriginal() const {
+    return yOriginal;
 }
 
 void Boss::setVida(int nuevaVida) {
@@ -90,7 +102,7 @@ void Boss::resetear() {
 	y = yOriginal;
 	pasoActual = 0;
 	atacando = false;
-	recibiendoDaño = false;
+	recibiendoDano = false;
 	turnosDesdeUltimoAtaque = 0;
 }
 
@@ -98,7 +110,3 @@ void Boss::forceAtk() {
 	turnosDesdeUltimoAtaque = frecuenciaAtaque;
 	prepararAtaque();
 }
-
-
-}
-

@@ -1,17 +1,18 @@
 #ifndef JUGADOR_H
 #define JUGADOR_H
 #include <string>
+#include "mazmorra.h"
 using namespace std;
 
 class Jugador {
 private:
     int x, y;
     int vida;
-    int daño;
+    int dano;
     int rango;
     string habilidad;
     string direccion;
-    bool recibiendoDaño;
+    bool recibiendoDano;
     int llaves;
     int llavesJefe;
     int pasos;
@@ -27,11 +28,12 @@ private:
 public:
     Jugador(int startX, int startY);
 
-    void mover(char direccionInput);
-    void recibirDaño(int cantidad);
+    void mover(char direccionInput, Mazmorra* mazmorra);
+    void recibirDano(int cantidad);
     void curar(int cantidad);
-    void usarHabilidad();
-    void atacar();
+    void usarHabilidad(Mazmorra* mazmorra);
+    void interactuar(Mazmorra* mazmorra);
+    void atacar(Mazmorra* mazmorra);
 
     int getX() const;
     int getY() const;

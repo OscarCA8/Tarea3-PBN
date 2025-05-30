@@ -1,16 +1,17 @@
 #include <iostream>
 #include "jugador.h"
+#include "mazmorra.h"
 using namespace std;
 
 Jugador::Jugador(int startX, int startY) {
     x = startX;
     y = startY;
     vida = 100;        
-    daño = 20;         
+    dano = 20;         
     rango = 1;         
     habilidad = "";    
     direccion = "arriba"; 
-    recibiendoDaño = false;
+    recibiendoDano = false;
     llaves = 0;
     llavesJefe = 0;
     pasos = 0;
@@ -24,68 +25,51 @@ Jugador::Jugador(int startX, int startY) {
     haGanado = false;
 }
 
-void Jugador::mover(char direccionInput) {
+void Jugador::mover(char direccionInput, Mazmorra* mazmorra) {
     string nuevaDireccion;
-    
-    switch(direccionInput) {
-        case 'w':
-        case 'W':
-            nuevaDireccion = "arriba";
-            break;
-        case 's':
-        case 'S':
-            nuevaDireccion = "abajo";
-            break;
-        case 'a':
-        case 'A':
-            nuevaDireccion = "izquierda";
-            break;
-        case 'd':
-        case 'D':
-            nuevaDireccion = "derecha";
-            break;
+
+    switch (direccionInput) {
+        case 'w': case 'W': nuevaDireccion = "arriba"; break;
+        case 's': case 'S': nuevaDireccion = "abajo"; break;
+        case 'a': case 'A': nuevaDireccion = "izquierda"; break;
+        case 'd': case 'D': nuevaDireccion = "derecha"; break;
         default:
-            cout << "dirección no válida. Use W/A/S/D." << endl;
-            return;
+            cout << "Dirección no válida. Usa W/A/S/D." << endl;
+            return; 
     }
-    
 
     if (direccion != nuevaDireccion) {
         direccion = nuevaDireccion;
         cout << "Link gira hacia " << direccion << endl;
         return; 
     }
-    
-    int nuevaX = x, nuevaY = y;
-    switch(direccionInput) {
-        case 'w':
-        case 'W':
-            nuevaY--;
-            break;
-        case 's':
-        case 'S':
-            nuevaY++;
-            break;
-        case 'a':
-        case 'A':
-            nuevaX--;
-            break;
-        case 'd':
-        case 'D':
-            nuevaX++;
-            break;
+
+    int nuevaFila = y;
+    int nuevaColumna = x;
+
+    if (direccion == "arriba") nuevaFila--;
+    else if (direccion == "abajo") nuevaFila++;
+    else if (direccion == "izquierda") nuevaColumna--;
+    else if (direccion == "derecha") nuevaColumna++;
+
+    char celdaDestino = mazmorra->obtenerCelda(nuevaFila, nuevaColumna);
+
+    if (celdaDestino == 'X' || celdaDestino == 'P' || celdaDestino == 'C' || 
+        celdaDestino == 'K' || celdaDestino == 'Y' || celdaDestino == 'E' || celdaDestino == 'J') {
+        cout << "No puedes moverte ahí, hay un obstáculo: " << celdaDestino << endl;
+        return; 
     }
-    
-    x = nuevaX;
-    y = nuevaY;
+
+    x = nuevaColumna;
+    y = nuevaFila;
     pasos++;
     cout << "Link se movió hacia " << direccion << ". Posición: (" << x << ", " << y << ")" << endl;
 }
 
-void Jugador::recibirDaño(int cantidad) {
+void Jugador::recibirDano(int cantidad) {
     if (cantidad <= 0) return;
     
-    recibiendoDaño = true;
+    recibiendoDano = true;
     vida -= cantidad;
     
     if (vida < 0) {
@@ -98,7 +82,7 @@ void Jugador::recibirDaño(int cantidad) {
         cout << "Link ha sido derrotado!" << endl;
     }
     
-    recibiendoDaño = false;
+    recibiendoDano = false;
 }
 
 void Jugador::curar(int cantidad) {
@@ -112,14 +96,93 @@ void Jugador::curar(int cantidad) {
     cout << "Link se curó " << cantidad << " puntos de vida. Vida actual: " << vida << endl;
 }
 
-void Jugador::usarHabilidad() {
+void Jugador::usarHabilidad(Mazmorra* mazmorra) {
+    cout << "Link usa su habilidad especial: lanza una bomba.\n";
+    usandoHabilidad = true;
 
+    // Simulación: marca las 4 direcciones como daño si hay enemigos o paredes rompibles
+    int dx[] = {0, 0, -1, 1};
+    int dy[] = {-1, 1, 0, 0};
+
+    for (int i = 0; i < 4; ++i) {
+        int nx = x + dx[i];
+        int ny = y + dy[i];
+        char celda = mazmorra->obtenerCelda(nx, ny);
+
+        if (celda == 'E' || celda == 'A' || celda == '!' || celda == '$' || celda == 'X') {
+            mazmorra->modificarCelda(nx, ny, '$');
+        }
+    }
 }
 
-void Jugador::atacar() {
+void Jugador::interactuar(Mazmorra* mazmorra) {
+    int dx = 0, dy = 0;
+
+    if (direccion == "arriba") dy = -1;
+    else if (direccion == "abajo") dy = 1;
+    else if (direccion == "izquierda") dx = -1;
+    else if (direccion == "derecha") dx = 1;
+
+    int cx = x + dx;
+    int cy = y + dy;
+
+    char objeto = mazmorra->obtenerCelda(cy, cx);
+
+    switch(objeto) {
+        case 'C':  
+	    mazmorra->modificarCelda(cy, cx, 'U');  
+	    abrirCofre();
+	    recogerLlave();
+	    break;
+
+	case 'K':  
+	    mazmorra->modificarCelda(cy, cx, 'U');  
+	    abrirCofre();
+	    recogerLlaveJefe();
+	    break;
+
+        case 'P':  
+            if (llaves > 0) {
+                mazmorra->modificarCelda(cy, cx, '-');  
+                abrirPuerta();
+            } else {
+                cout << "Necesitas una llave para abrir esta puerta." << endl;
+            }
+            break;
+
+        case 'Y': 
+            if (llavesJefe > 0) {
+                mazmorra->modificarCelda(cy, cx, 'T');
+                entrarSalaJefe();
+            }
+            break;
+
+        default:
+            cout << "No hay nada con qué interactuar delante de ti." << endl;
+            break;
+    }
+}
+
+void Jugador::atacar(Mazmorra* mazmorra) {
+    int dx = 0, dy = 0;
+    if (direccion == "arriba") dy = -1;
+    else if (direccion == "abajo") dy = 1;
+    else if (direccion == "izquierda") dx = -1;
+    else if (direccion == "derecha") dx = 1;
+
+    int objetivoX = x + dx;
+    int objetivoY = y + dy;
+
+    char celda = mazmorra->obtenerCelda(objetivoX, objetivoY);
+
+    if (celda == 'E' || celda == 'A' || celda == '!' || celda == '$') {
+        mazmorra->modificarCelda(objetivoX, objetivoY, '$');
+        cout << "Link ataca al enemigo con su espada y causa 10 de daño.\n";
+        enemigosDerrotados++; // Aquí idealmente deberías reducir vida real al enemigo
+    } else {
+        cout << "No hay enemigo que atacar en esa dirección.\n";
+    }
     atacando = true;
-    cout << "Link ataca hacia " << direccion << " con su espada (10 de daño)!" << endl;
-    atacando = false;
 }
 
 int Jugador::getX() const {

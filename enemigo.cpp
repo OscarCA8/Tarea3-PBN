@@ -3,7 +3,7 @@
 Enemigo::Enemigo(
 	int x, int y,
 	int vida,
-	int daño,
+	int dano,
 	int rango,
 	int frecuenciaAtaque,
 	const vector<pair<int, int>>& patron
@@ -11,16 +11,16 @@ Enemigo::Enemigo(
 	:x(x),
 	y(y),
 	vida(vida),
-	daño(daño),
+	dano(dano),
 	rango(rango),
 	frecuenciaAtaque(frecuenciaAtaque),
 	patronMovimiento(patron),
 	pasoActual(),
 	atacando(),
-	recibiendoDaño(),
-	turnosDesdeUltimoAtaque(),
 	xOriginal(x),
-	yOriginal(y)
+	yOriginal(y),
+	recibiendoDano(),
+	turnosDesdeUltimoAtaque()
 {}
 
 void Enemigo::mover() {
@@ -41,9 +41,9 @@ void Enemigo::prepararAtaque() {
 	}
 }
 
-void Enemigo::recibirDaño(int cantidad) {
+void Enemigo::recibirDano(int cantidad) {
 	vida -= cantidad;
-	recibiendoDaño = true;
+	recibiendoDano = true;
 	if (vida < 0) vida = 0;
 }
 
@@ -55,20 +55,24 @@ int Enemigo::getY() const {
 	return y;
 }
 
+bool Enemigo::estaPorAtacar() const {
+    return turnosDesdeUltimoAtaque >= frecuenciaAtaque;
+}
+
 bool Enemigo::estaAtacando() const {
 	return atacando;
 }
 
-bool Enemigo::estaRecibiendoDaño() const {
-	return recibiendoDaño;
+bool Enemigo::estaRecibiendoDano() const {
+	return recibiendoDano;
 }
 
 int Enemigo::getVida() const {
 	return vida;
 }
 
-int Enemigo::getDaño() const {
-	return daño;
+int Enemigo::getDano() const {
+	return dano;
 }
 
 void Enemigo::setVida(int nuevaVida) {
@@ -85,7 +89,7 @@ void Enemigo::resetear() {
 	y = yOriginal;
 	pasoActual = 0;
 	atacando = false;
-	recibiendoDaño = false;
+	recibiendoDano = false;
 	turnosDesdeUltimoAtaque = 0;
 }
 
@@ -93,5 +97,3 @@ void Enemigo::forceAtk() {
 	turnosDesdeUltimoAtaque = frecuenciaAtaque;
 	prepararAtaque();
 }
-
-

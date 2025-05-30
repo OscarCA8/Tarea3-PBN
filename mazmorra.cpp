@@ -35,14 +35,14 @@ void Mazmorra::actualizarMapa() {
 	}
 
 	for (const auto& enemigo : enemigos) {
-		int x = enemigo.getPosicionY(); 
-		int y = enemigo.getPosicionX(); 
+		int x = enemigo.getY(); 
+		int y = enemigo.getX(); 
 		
 		if (x >= 0 && x < filas && y >= 0 && y < columnas) {
 			
 			char simbolo = 'E'; 
 			
-			if (enemigo.estaRecibiendoDaño()) {
+			if (enemigo.estaRecibiendoDano()) {
 				simbolo = '$';
 			} else if (enemigo.estaAtacando()) {
 				simbolo = 'A';

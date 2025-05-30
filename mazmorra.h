@@ -2,7 +2,7 @@
 #define MAZMORRA_H
 #include <vector>
 #include <string>
-#include "Enemigo.hpp"
+#include "enemigo.h"
 using namespace std;
 
 class Mazmorra {

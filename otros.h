@@ -51,7 +51,7 @@ struct MazmorrasCargadas {
 
 class Otros {
 public:
-    EnemigosCargados cargarEnemigos(const string& ruta);
+    EnemigosCargados cargarEnemigosPorIndice(const string& ruta, int indice);
     MazmorrasCargadas cargarMazmorras(const string& ruta);
 };
 #endif

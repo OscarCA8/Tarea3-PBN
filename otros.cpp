@@ -2,144 +2,150 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
-#include <cctype>
 
 using namespace std;
 
-
-
-EnemigosCargados Otros::cargarEnemigos(const string& ruta) {
-	EnemigosCargados datos;
-	ifstream archivo(ruta);
-	if (!archivo.is_open()) {
-		cerr << "Error al abrir el archivo: " << ruta << endl;
-		return datos;
-	}
-
-	string linea;
-	while (getline(archivo, linea)) {
-		stringstream ss(linea);
-		vector<string> tokens;
-		string token;
-
-		// Separar todos los tokens por coma
-		while (getline(ss, token, ',')) {
-			tokens.push_back(token);
-		}
-
-		size_t i = 0;
-		// --- Leer enemigos de mazmorra ---
-		while (i < tokens.size() && !isalpha(tokens[i][0])) {
-			DataDelEnemigo enemigo;
-			enemigo.y = stoi(tokens[i++]);
-			enemigo.x = stoi(tokens[i++]);
-			int numMov = stoi(tokens[i++]);
-			for (int j = 0; j < numMov; ++j) {
-				int dx = stoi(tokens[i++]);
-				int dy = stoi(tokens[i++]);
-				enemigo.movimientos.push_back({dx, dy});
-			}
-			enemigo.vida = stoi(tokens[i++]);
-			enemigo.dano = stoi(tokens[i++]);
-			enemigo.rangoAtaque = stoi(tokens[i++]);
-			enemigo.frecuenciaAtaque = stoi(tokens[i++]);
-			datos.enemigosMazmorra.push_back(enemigo);
-		}
-
-		// --- Leer jefe ---
-		DataDelBoss jefe;
-		jefe.nombre = tokens[i++];
-		jefe.y = stoi(tokens[i++]);
-		jefe.x = stoi(tokens[i++]);
-		int numMov = stoi(tokens[i++]);
-		for (int j = 0; j < numMov; ++j) {
-			int dx = stoi(tokens[i++]);
-			int dy = stoi(tokens[i++]);
-			jefe.movimientos.push_back({dx, dy});
-		}
-		jefe.vida = stoi(tokens[i++]);
-		jefe.dano = stoi(tokens[i++]);
-		jefe.rangoAtaque = stoi(tokens[i++]);
-		jefe.frecuenciaAtaque = stoi(tokens[i++]);
-		datos.jefe = jefe;
-
-		// --- Leer enemigos de sala del jefe ---
-		while (i < tokens.size()) {
-			DataDelEnemigo enemigo;
-			enemigo.y = stoi(tokens[i++]);
-			enemigo.x = stoi(tokens[i++]);
-			int numMov = stoi(tokens[i++]);
-			for (int j = 0; j < numMov; ++j) {
-				int dx = stoi(tokens[i++]);
-				int dy = stoi(tokens[i++]);
-				enemigo.movimientos.push_back({dx, dy});
-			}
-			 enemigo.vida = stoi(tokens[i++]);
-			enemigo.dano = stoi(tokens[i++]);using namespace std;
-			enemigo.rangoAtaque = stoi(tokens[i++]);
-			enemigo.frecuenciaAtaque = stoi(tokens[i++]);
-			datos.enemigosJefe.push_back(enemigo);
-		}
-	}
-
-	archivo.close();
-	return datos;
-}
-
-
-MazmorrasCargadas Otros::cargarMazmorras(const string& ruta) {
-    MazmorrasCargadas cargadas;
+EnemigosCargados Otros::cargarEnemigosPorIndice(const string& ruta, int indice) {
+    EnemigosCargados datos;
     ifstream archivo(ruta);
     if (!archivo.is_open()) {
-        cerr << "No se pudo abrir el archivo de mazmorras: " << ruta << endl;
-        return cargadas;
+        cerr << "Error al abrir el archivo: " << ruta << endl;
+        return datos;
     }
 
     string linea;
+    int actual = 0;
     while (getline(archivo, linea)) {
-        stringstream ss(linea);
-        string token;
-        vector<string> tokens;
+        if (actual == indice) break;
+        actual++;
+    }
 
-        while (getline(ss, token, ',')) {
-            tokens.push_back(token);
+    if (actual != indice) {
+        cerr << "Índice fuera de rango en enemigos.csv\n";
+        return datos;
+    }
+
+    stringstream ss(linea);
+    vector<string> tokens;
+    string token;
+    while (getline(ss, token, ',')) {
+        tokens.push_back(token);
+    }
+
+    size_t i = 0;
+    while (i < tokens.size() &&
+           !((tokens[i][0] >= 'A' && tokens[i][0] <= 'Z') ||
+             (tokens[i][0] >= 'a' && tokens[i][0] <= 'z'))) {
+        DataDelEnemigo enemigo;
+        enemigo.y = stoi(tokens[i++]);
+        enemigo.x = stoi(tokens[i++]);
+        int numMov = stoi(tokens[i++]);
+        for (int j = 0; j < numMov; ++j) {
+            int dx = stoi(tokens[i++]);
+            int dy = stoi(tokens[i++]);
+            enemigo.movimientos.push_back({dx, dy});
         }
+        enemigo.vida = stoi(tokens[i++]);
+        enemigo.dano = stoi(tokens[i++]);
+        enemigo.rangoAtaque = stoi(tokens[i++]);
+        enemigo.frecuenciaAtaque = stoi(tokens[i++]);
+        datos.enemigosMazmorra.push_back(enemigo);
+    }
 
-        int i = 0;
-        // Mazmorra
-        int filasM = stoi(tokens[i++]);
-        int columnasM = stoi(tokens[i++]);
-        DataDeMazmorra mazmorra;
-        mazmorra.filas = filasM;
-        mazmorra.columnas = columnasM;
-        mazmorra.matriz.resize(filasM, vector<char>(columnasM));
+    DataDelBoss jefe;
+    jefe.nombre = tokens[i++];
+    jefe.y = stoi(tokens[i++]);
+    jefe.x = stoi(tokens[i++]);
+    int numMov = stoi(tokens[i++]);
+    for (int j = 0; j < numMov; ++j) {
+        int dx = stoi(tokens[i++]);
+        int dy = stoi(tokens[i++]);
+        jefe.movimientos.push_back({dx, dy});
+    }
+    jefe.vida = stoi(tokens[i++]);
+    jefe.dano = stoi(tokens[i++]);
+    jefe.rangoAtaque = stoi(tokens[i++]);
+    jefe.frecuenciaAtaque = stoi(tokens[i++]);
+    datos.jefe = jefe;
 
-        for (int f = 0; f < filasM; ++f) {
-            for (int c = 0; c < columnasM; ++c) {
-                mazmorra.matriz[f][c] = tokens[i++][0];
-            }
+    while (i < tokens.size()) {
+        DataDelEnemigo enemigo;
+        enemigo.y = stoi(tokens[i++]);
+        enemigo.x = stoi(tokens[i++]);
+        int numMov = stoi(tokens[i++]);
+        for (int j = 0; j < numMov; ++j) {
+            int dx = stoi(tokens[i++]);
+            int dy = stoi(tokens[i++]);
+            enemigo.movimientos.push_back({dx, dy});
         }
-        cargadas.mazmorras.push_back(mazmorra);
-
-        // Sala del Jefe
-        int filasS = stoi(tokens[i++]);
-        int columnasS = stoi(tokens[i++]);
-        DataDeSaladelJefe sala;
-        sala.filas = filasS;
-        sala.columnas = columnasS;
-        sala.matriz.resize(filasS, vector<char>(columnasS));
-
-        for (int f = 0; f < filasS; ++f) {
-            for (int c = 0; c < columnasS; ++c) {
-                sala.matriz[f][c] = tokens[i++][0];
-            }
-        }
-        cargadas.salasJefe.push_back(sala);
+        enemigo.vida = stoi(tokens[i++]);
+        enemigo.dano = stoi(tokens[i++]);
+        enemigo.rangoAtaque = stoi(tokens[i++]);
+        enemigo.frecuenciaAtaque = stoi(tokens[i++]);
+        datos.enemigosJefe.push_back(enemigo);
     }
 
     archivo.close();
-    return cargadas;
+    return datos;
 }
 
+MazmorrasCargadas Otros::cargarMazmorras(const string& ruta) {
+    MazmorrasCargadas resultado;
+    ifstream archivo(ruta);
 
+    if (!archivo.is_open()) {
+        cerr << "Error: no se pudo abrir el archivo de mazmorras: " << ruta << endl;
+        return resultado;
+    }
 
+    string linea;
+    while (getline(archivo, linea)) { 
+        stringstream ss(linea);
+        string item;
+        vector<string> tokens;
+
+        while (getline(ss, item, ',')) {
+            tokens.push_back(item);
+        }
+
+        size_t index = 0;
+        DataDeMazmorra dm;
+        DataDeSaladelJefe ds;
+
+        dm.filas = stoi(tokens[index++]);
+        dm.columnas = stoi(tokens[index++]);
+
+        if (index + dm.filas * dm.columnas > tokens.size()) {
+            cerr << "Error: datos insuficientes para la mazmorra.\n";
+            continue;  
+        }
+
+        dm.matriz.resize(dm.filas, vector<char>(dm.columnas));
+        for (int i = 0; i < dm.filas; ++i) {
+            for (int j = 0; j < dm.columnas; ++j) {
+                dm.matriz[i][j] = tokens[index++][0];
+            }
+        }
+
+        ds.filas = stoi(tokens[index++]);
+        ds.columnas = stoi(tokens[index++]);
+
+        if (index + ds.filas * ds.columnas > tokens.size()) {
+            cerr << "Error: datos insuficientes para la sala del jefe.\n";
+            continue;  
+        }
+
+        ds.matriz.resize(ds.filas, vector<char>(ds.columnas));
+        for (int i = 0; i < ds.filas; ++i) {
+            for (int j = 0; j < ds.columnas; ++j) {
+                ds.matriz[i][j] = tokens[index++][0];
+            }
+        }
+
+        resultado.mazmorras.push_back(dm);
+        resultado.salasJefe.push_back(ds);
+    }
+
+    archivo.close();
+    return resultado;
+}

@@ -41,12 +41,12 @@ void SalaJefe::actualizarMapa() {
 	}
 	
 	for (const auto& enemigo : enemigos) {
-		int x = enemigo.getPosicionY();
-		int y = enemigo.getPosicionX();
+		int x = enemigo.getY();
+		int y = enemigo.getX();
 		
 		if (x >= 0 && x < filas && y >= 0 && y < columnas) {
 			char simbolo = 'E';
-			if (enemigo.estaRecibiendoDaño()) {
+			if (enemigo.estaRecibiendoDano()) {
 				simbolo = '$'; 
 			} else if (enemigo.estaAtacando()) {
 				simbolo = 'A'; 
@@ -58,13 +58,13 @@ void SalaJefe::actualizarMapa() {
 		}
 	}
 	
-	int jefeX = jefe.getPosicionY(); 
-	int jefeY = jefe.getPosicionX(); 
+	int jefeX = jefe.getY(); 
+	int jefeY = jefe.getX(); 
 	
 	if (jefeX >= 0 && jefeX < filas && jefeY >= 0 && jefeY < columnas) {
 		char simboloJefe = 'J'; 
 		
-		if (jefe.estaRecibiendoDaño()) {
+		if (jefe.estaRecibiendoDano()) {
 			simboloJefe = '$'; 
 		} else if (jefe.estaAtacando()) {
 			simboloJefe = 'A'; 
@@ -76,8 +76,8 @@ void SalaJefe::actualizarMapa() {
 	}
 	
 	if (jefe.getVida() <= 0) {
-		int jefeOriginalX = jefe.getYOriginal();
-		int jefeOriginalY = jefe.getXOriginal();
+		int jefeOriginalX = jefe.getXOriginal();
+		int jefeOriginalY = jefe.getYOriginal();
 		if (jefeOriginalX >= 0 && jefeOriginalX < filas && 
 		    jefeOriginalY >= 0 && jefeOriginalY < columnas) {
 			mapa[jefeOriginalX][jefeOriginalY] = 'V'; 
@@ -107,6 +107,6 @@ void SalaJefe::modificarCelda(int x, int y, char simbolo) {
 }
 
 pair<int, int> SalaJefe::getEntrada() const {
-	return PosicionEntradaJefe;
+	return posicionEntradaJefe;
 }
 
