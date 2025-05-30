@@ -80,3 +80,14 @@ int Mazmorra::getColumnas() const {
 	return columnas;
 }
 
+bool Mazmorra::puertaJefeAbierta() {
+    for (int fila = 0; fila < filas; fila++) {
+        for (int col = 0; col < columnas; col++) {
+            if (mapa[fila][col] == 'Y') {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+

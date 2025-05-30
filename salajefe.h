@@ -4,12 +4,14 @@
 #include <string>
 #include "enemigo.h"
 #include "boss.h"
+#include "mazmorra.h"
 using namespace std;
 
 class SalaJefe : public Mazmorra {
 private:
     int filas;
     int columnas;
+    vector<vector<char>> mapaBase;
     vector<vector<char>> mapa;
     vector<Enemigo> enemigos;
     Boss jefe;

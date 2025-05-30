@@ -9,8 +9,10 @@ SalaJefe::SalaJefe(
 	const Boss& jefe,
 	pair<int, int> entrada
 )
-	:filas(filas),
+	:Mazmorra(filas, columnas, mapa),
+	filas(filas),
 	columnas(columnas),
+	mapaBase(mapa),
 	mapa(mapa),
 	enemigos(enemigos),
 	jefe(jefe),
@@ -30,6 +32,7 @@ void SalaJefe::mostrarMapa() {
 }
 
 void SalaJefe::actualizarMapa() {
+	mapa = mapaBase;
 	for (int i = 0; i < filas; i++) {
 		for (int j = 0; j < columnas; j++) {
 			char celda = mapa[i][j];

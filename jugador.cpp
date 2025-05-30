@@ -55,7 +55,7 @@ void Jugador::mover(char direccionInput, Mazmorra* mazmorra) {
     char celdaDestino = mazmorra->obtenerCelda(nuevaFila, nuevaColumna);
 
     if (celdaDestino == 'X' || celdaDestino == 'P' || celdaDestino == 'C' || 
-        celdaDestino == 'K' || celdaDestino == 'Y' || celdaDestino == 'E' || celdaDestino == 'J') {
+        celdaDestino == 'K' || celdaDestino == 'Y' || celdaDestino == 'E' || celdaDestino == 'J' || celdaDestino == 'U' || celdaDestino == 'A') {
         cout << "No puedes moverte ahí, hay un obstáculo: " << celdaDestino << endl;
         return; 
     }
@@ -96,24 +96,142 @@ void Jugador::curar(int cantidad) {
     cout << "Link se curó " << cantidad << " puntos de vida. Vida actual: " << vida << endl;
 }
 
-void Jugador::usarHabilidad(Mazmorra* mazmorra) {
-    cout << "Link usa su habilidad especial: lanza una bomba.\n";
-    usandoHabilidad = true;
+void Jugador::salto(Mazmorra* mazmorra, char direccion) {
+    int dx = 0, dy = 0;
+    if (direccion == 'w') dy = -2;   
+    else if (direccion == 'a') dx = -2;  
+    else if (direccion == 's') dy = 2;   
+    else if (direccion == 'd') dx = 2;   
 
-    // Simulación: marca las 4 direcciones como daño si hay enemigos o paredes rompibles
-    int dx[] = {0, 0, -1, 1};
-    int dy[] = {-1, 1, 0, 0};
+    char celdaDestino = mazmorra->obtenerCelda(y + dy, x + dx);
+    if (celdaDestino == '-' || celdaDestino == ' ') {
+        setPosicion(y + dy, x + dx);
+    } else {
+        cout << "¡Hay un obstáculo! Perdiste el turno." << endl;
+    }
+}
 
-    for (int i = 0; i < 4; ++i) {
-        int nx = x + dx[i];
-        int ny = y + dy[i];
-        char celda = mazmorra->obtenerCelda(nx, ny);
+void Jugador::usarEscudo(Mazmorra* mazmorra, char direccion) {
+    int index = 0;
+   
+    if (direccion == 'N') {
+        index = 0;  
+    } else if (direccion == 'S') {
+        index = 1;  
+    } else if (direccion == 'E') {
+        index = 2;  
+    } else if (direccion == 'O') {
+        index = 3;  
+    }
+    
+    if (enemigosQueAtacan[index]) {
+        cout << "Escudo activado contra ataque en " << direccion << endl;
+    } else {
+        cout << "No hay enemigos atacando en " << direccion << endl;
+    }
+}
 
-        if (celda == 'E' || celda == 'A' || celda == '!' || celda == '$' || celda == 'X') {
-            mazmorra->modificarCelda(nx, ny, '$');
+void Jugador::usarArco(Mazmorra* mazmorra, char direccion) {
+    int startX = x, startY = y;
+    int range = 5; 
+    for (int i = startX - range / 2; i < startX + range / 2; ++i) {
+        for (int j = startY - range / 2; j < startY + range / 2; ++j) {
+            if (mazmorra->obtenerCelda(i, j) != 'X' && 
+                mazmorra->obtenerCelda(i, j) != '-') { 
+                for (auto& enemigo : mazmorra->obtenerEnemigos()) {
+                    if (enemigo.getX() == i && enemigo.getY() == j) {
+                        enemigo.recibirDano(10);
+                    }
+                }
+            }
         }
     }
 }
+
+void Jugador::usarBomba(Mazmorra* mazmorra) {
+    if (numBombas > 0) {
+        char celdaDestino = mazmorra->obtenerCelda(y + 1, x); 
+        if (celdaDestino == 'X') { 
+            mazmorra->modificarCelda(y + 1, x, '-'); 
+        }
+
+        for (auto& enemigo : mazmorra->obtenerEnemigos()) {
+            if (abs(enemigo.getX() - x) <= 1 && abs(enemigo.getY() - y) <= 1) {
+                enemigo.recibirDano(100);
+            }
+        }
+
+        numBombas--;
+        cout << "¡Bomba activada!" << endl;
+    } else {
+        cout << "No tienes bombas disponibles." << endl;
+    }
+}
+
+void Jugador::usarGancho(Mazmorra* mazmorra, char direccion) {
+    int dx = 0, dy = 0;
+    if (direccion == 'w') dy = -1; 
+    else if (direccion == 'a') dx = -1; 
+    else if (direccion == 's') dy = 1; 
+    else if (direccion == 'd') dx = 1; 
+
+    char celda = mazmorra->obtenerCelda(y + dy, x + dx);
+    if (celda == 'X' || celda == 'C' || celda == 'K') {
+        setPosicion(y + dy, x + dx);
+        for (auto& enemigo : mazmorra->obtenerEnemigos()) {
+            if (enemigo.getX() == x + dx && enemigo.getY() == y + dy) {
+                enemigo.recibirDano(5);
+            }
+        }
+    } else {
+        cout << "No puedes usar el gancho aquí." << endl;
+    }
+}
+
+
+void Jugador::usarHabilidad(Mazmorra* mazmorra) {
+    cout << "Selecciona una habilidad:" << endl;
+    cout << "1. Salto" << endl;
+    cout << "2. Escudo" << endl;
+    cout << "3. Arco" << endl;
+    cout << "4. Bomba" << endl;
+    cout << "5. Gancho" << endl;
+    
+    int opcion;
+    cin >> opcion;  
+    
+    char direccion; 
+    
+    switch (opcion) {
+        case 1: 
+            cout << "Indica la dirección (w: arriba, a: izquierda, s: abajo, d: derecha): ";
+            cin >> direccion;
+            salto(mazmorra, direccion);
+            break;
+        case 2: 
+            cout << "Indica la dirección (w: arriba, a: izquierda, s: abajo, d: derecha): ";
+            cin >> direccion;
+            usarEscudo(mazmorra, direccion); 
+            break;
+        case 3: 
+            cout << "Indica la dirección (w: arriba, a: izquierda, s: abajo, d: derecha): ";
+            cin >> direccion;
+            usarArco(mazmorra, direccion); 
+            break;
+        case 4: 
+            usarBomba(mazmorra); 
+            break;
+        case 5: 
+            cout << "Indica la dirección (w: arriba, a: izquierda, s: abajo, d: derecha): ";
+            cin >> direccion;
+            usarGancho(mazmorra, direccion); 
+            break;
+        default:
+            cout << "Opción no válida. Intenta de nuevo." << endl;
+            break;
+    }
+}
+
 
 void Jugador::interactuar(Mazmorra* mazmorra) {
     int dx = 0, dy = 0;
@@ -178,11 +296,16 @@ void Jugador::atacar(Mazmorra* mazmorra) {
     if (celda == 'E' || celda == 'A' || celda == '!' || celda == '$') {
         mazmorra->modificarCelda(objetivoX, objetivoY, '$');
         cout << "Link ataca al enemigo con su espada y causa 10 de daño.\n";
-        enemigosDerrotados++; // Aquí idealmente deberías reducir vida real al enemigo
+        enemigosDerrotados++; 
     } else {
         cout << "No hay enemigo que atacar en esa dirección.\n";
     }
     atacando = true;
+}
+
+void Jugador::setPosicion(int nuevoX, int nuevoY) {
+    x = nuevoX;
+    y = nuevoY;
 }
 
 int Jugador::getX() const {

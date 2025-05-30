@@ -19,6 +19,7 @@ public:
     void actualizarMapa();
     char obtenerCelda(int x, int y) const;
     void modificarCelda(int x, int y, char simbolo);
+    bool puertaJefeAbierta();
 
     vector<Enemigo>& obtenerEnemigos();
     int getFilas() const;

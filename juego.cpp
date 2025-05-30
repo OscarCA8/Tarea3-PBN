@@ -74,7 +74,7 @@ void Juego::iniciar() {
             mazmorra->mostrarMapa();
         } else {
             salaJefe->actualizarMapa();
-            mazmorra->modificarCelda(jugador->getY(), jugador->getX(), 'L');
+            salaJefe->modificarCelda(jugador->getY(), jugador->getX(), 'L');
             salaJefe->mostrarMapa();
         }
 
@@ -118,8 +118,16 @@ void Juego::iniciar() {
             char celda = mazmorra->obtenerCelda(jugador->getY(), jugador->getX());
             if (celda == 'T') {
                 jugador->entrarSalaJefe();
-                enSalaJefe = true;
-                cout << "Transición a sala del jefe...\n";
+		enSalaJefe = true;
+
+		auto entrada = salaJefe->getEntrada();
+		jugador->setPosicion(entrada.second, entrada.first);  
+
+		salaJefe->actualizarMapa();
+		salaJefe->modificarCelda(jugador->getY(), jugador->getX(), 'L');
+		cout << "Transición a sala del jefe...\n";
+		salaJefe->mostrarMapa();
+
             }
 
         } else {

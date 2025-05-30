@@ -19,6 +19,7 @@ private:
     int cofresAbiertos;
     int puertasAbiertas;
     int enemigosDerrotados;
+    bool enemigosQueAtacan[4];
     int numBombas;
     bool usandoHabilidad;
     bool atacando;
@@ -32,9 +33,15 @@ public:
     void recibirDano(int cantidad);
     void curar(int cantidad);
     void usarHabilidad(Mazmorra* mazmorra);
+    void salto(Mazmorra* mazmorra, char direccion);
+    void usarEscudo(Mazmorra* mazmorra, char direccion);
+    void usarArco(Mazmorra* mazmorra, char direccion);
+    void usarBomba(Mazmorra* mazmorra);
+    void usarGancho(Mazmorra* mazmorra, char direccion);
     void interactuar(Mazmorra* mazmorra);
     void atacar(Mazmorra* mazmorra);
-
+    
+    void setPosicion(int nuevoX, int nuevoY);
     int getX() const;
     int getY() const;
     int getVida() const;
