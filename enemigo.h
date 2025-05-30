@@ -35,6 +35,7 @@ public:
     void setVida(int nuevaVida);
     void setPosicion(int nuevaX, int nuevaY);
     void resetear();
-    void forceAtk(); 
+    void forceAtk();
+    void reiniciarEstadoDano(); 
 };
 #endif

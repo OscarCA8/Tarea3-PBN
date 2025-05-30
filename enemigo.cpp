@@ -26,8 +26,8 @@ Enemigo::Enemigo(
 void Enemigo::mover() {
 	if (!patronMovimiento.empty()) {
 	pasoActual = (pasoActual + 1) % patronMovimiento.size();
-	x = xOriginal + patronMovimiento[pasoActual].first;
-	y = yOriginal + patronMovimiento[pasoActual].second;
+	x = xOriginal + patronMovimiento[pasoActual].second;
+	y = yOriginal + patronMovimiento[pasoActual].first;
 	}
 }
 
@@ -56,7 +56,7 @@ int Enemigo::getY() const {
 }
 
 bool Enemigo::estaPorAtacar() const {
-    return turnosDesdeUltimoAtaque >= frecuenciaAtaque;
+	return turnosDesdeUltimoAtaque >= frecuenciaAtaque;
 }
 
 bool Enemigo::estaAtacando() const {
@@ -96,4 +96,8 @@ void Enemigo::resetear() {
 void Enemigo::forceAtk() {
 	turnosDesdeUltimoAtaque = frecuenciaAtaque;
 	prepararAtaque();
+}
+
+void Enemigo::reiniciarEstadoDano() {
+	recibiendoDano = false;
 }

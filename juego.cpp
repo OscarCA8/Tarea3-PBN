@@ -6,6 +6,8 @@
 #include "salajefe.h"
 #include "otros.h"
 #include <iostream>
+#include <algorithm>  // Necesario para std::remove_if
+
 using namespace std;
 
 Juego::Juego(const string& dungeonsPath, const string& enemiesPath) {
@@ -24,33 +26,34 @@ Juego::Juego(const string& dungeonsPath, const string& enemiesPath) {
     cout << "Seleccione una mazmorra:\n";
     for (size_t i = 0; i < datosMazmorras.mazmorras.size(); ++i) {
         cout << i << ": Mazmorra " << i << " (" << datosMazmorras.mazmorras[i].filas
-                  << "x" << datosMazmorras.mazmorras[i].columnas << ")\n";
+             << "x" << datosMazmorras.mazmorras[i].columnas << ")\n";
     }
 
     int opcion;
     cin >> opcion;
     if (opcion < 0 || opcion >= static_cast<int>(datosMazmorras.mazmorras.size())) {
         cerr << "Opción inválida\n";
-        exit(1); 
+        exit(1);
     }
 
     EnemigosCargados datosEnemigos = lector.cargarEnemigosPorIndice(enemiesPath, opcion);
-
     const DataDeMazmorra& datosMapa = datosMazmorras.mazmorras[opcion];
+
     mazmorra = new Mazmorra(datosMapa.filas, datosMapa.columnas, datosMapa.matriz);
     for (const auto& d : datosEnemigos.enemigosMazmorra) {
-        Enemigo e(d.x, d.y, d.vida, d.dano, d.rangoAtaque, d.frecuenciaAtaque, d.movimientos);
-        mazmorra->obtenerEnemigos().push_back(e);
+        mazmorra->obtenerEnemigos().emplace_back(d.x, d.y, d.vida, d.dano, d.rangoAtaque, d.frecuenciaAtaque, d.movimientos);
     }
 
     const DataDeSaladelJefe& salaData = datosMazmorras.salasJefe[opcion];
     const DataDelBoss& dBoss = datosEnemigos.jefe;
     Boss boss(dBoss.nombre, dBoss.x, dBoss.y, dBoss.vida, dBoss.dano,
               dBoss.rangoAtaque, dBoss.frecuenciaAtaque, dBoss.movimientos);
+
     vector<Enemigo> enemigosJefe;
     for (const auto& d : datosEnemigos.enemigosJefe) {
         enemigosJefe.emplace_back(d.x, d.y, d.vida, d.dano, d.rangoAtaque, d.frecuenciaAtaque, d.movimientos);
     }
+
     salaJefe = new SalaJefe(salaData.filas, salaData.columnas, salaData.matriz,
                             enemigosJefe, boss, make_pair(dBoss.x, dBoss.y));
 
@@ -69,44 +72,60 @@ void Juego::iniciar() {
 
     while (!juegoTerminado) {
         if (!enSalaJefe) {
+
+            auto& enemigos = mazmorra->obtenerEnemigos();
+            enemigos.erase(remove_if(enemigos.begin(), enemigos.end(),
+                                     [](const Enemigo& e) { return e.getVida() <= 0; }),
+                           enemigos.end());
+
             mazmorra->actualizarMapa();
             mazmorra->modificarCelda(jugador->getY(), jugador->getX(), 'L');
             mazmorra->mostrarMapa();
         } else {
+
+            auto& enemigos = salaJefe->obtenerEnemigos();
+            enemigos.erase(remove_if(enemigos.begin(), enemigos.end(),
+                                     [](const Enemigo& e) { return e.getVida() <= 0; }),
+                           enemigos.end());
+
             salaJefe->actualizarMapa();
             salaJefe->modificarCelda(jugador->getY(), jugador->getX(), 'L');
             salaJefe->mostrarMapa();
         }
 
         cout << "\nVida: " << jugador->getVida() << ". Comandos: w/a/s/d=mover, x=atacar, z=habilidad, c=interactuar, p=salir\n> ";
-	char comando;
-	cin >> comando;
+        char comando;
+        cin >> comando;
 
-	switch (comando) {
-	    case 'w': case 'a': case 's': case 'd':
-		jugador->mover(comando, enSalaJefe ? static_cast<Mazmorra*>(salaJefe) : mazmorra);
-		break;
-	    case 'x':
-		jugador->atacar(enSalaJefe ? static_cast<Mazmorra*>(salaJefe) : mazmorra);
-		break;
-	    case 'z':
-		jugador->usarHabilidad(enSalaJefe ? static_cast<Mazmorra*>(salaJefe) : mazmorra);
-		break;
-	    case 'c':
-		jugador->interactuar(enSalaJefe ? static_cast<Mazmorra*>(salaJefe) : mazmorra);
-		break;
-	    case 'p':
-		cout << "Juego terminado por el jugador.\n";
-		juegoTerminado = true;
-		break;
-		return;
-	    default:
-		cout << "Comando no reconocido.\n";
-	}
+        switch (comando) {
+            case 'w': case 'a': case 's': case 'd':
+                jugador->mover(comando, enSalaJefe ? static_cast<Mazmorra*>(salaJefe) : mazmorra);
+                break;
+            case 'x':
+                jugador->atacar(enSalaJefe ? static_cast<Mazmorra*>(salaJefe) : mazmorra);
+                break;
+            case 'z':
+                jugador->usarHabilidad(enSalaJefe ? static_cast<Mazmorra*>(salaJefe) : mazmorra);
+                break;
+            case 'c':
+                jugador->interactuar(enSalaJefe ? static_cast<Mazmorra*>(salaJefe) : mazmorra);
+                break;
+            case 'p':
+                cout << "Juego terminado por el jugador.\n";
+                juegoTerminado = true;
+                break;
+            default:
+                cout << "Comando no reconocido.\n";
+        }
 
         if (!enSalaJefe) {
             for (auto& enemigo : mazmorra->obtenerEnemigos()) {
-                enemigo.mover();
+                if (!(abs(enemigo.getX() - jugador->getX()) <= 1 &&
+                      abs(enemigo.getY() - jugador->getY()) <= 1 &&
+                      !(enemigo.getX() == jugador->getX() && enemigo.getY() == jugador->getY()))) {
+                    enemigo.mover();
+                }
+
                 enemigo.prepararAtaque();
                 if (enemigo.estaAtacando() &&
                     (enemigo.getX() - jugador->getX()) * (enemigo.getX() - jugador->getX()) <= 1 &&
@@ -118,21 +137,22 @@ void Juego::iniciar() {
             char celda = mazmorra->obtenerCelda(jugador->getY(), jugador->getX());
             if (celda == 'T') {
                 jugador->entrarSalaJefe();
-		enSalaJefe = true;
+                enSalaJefe = true;
 
-		auto entrada = salaJefe->getEntrada();
-		jugador->setPosicion(entrada.second, entrada.first);  
-
-		salaJefe->actualizarMapa();
-		salaJefe->modificarCelda(jugador->getY(), jugador->getX(), 'L');
-		cout << "Transición a sala del jefe...\n";
-		salaJefe->mostrarMapa();
-
+                auto entrada = salaJefe->getEntrada();
+                jugador->setPosicion(entrada.second, entrada.first);
+                cout << "Transición a sala del jefe...\n";
             }
 
         } else {
             for (auto& enemigo : salaJefe->obtenerEnemigos()) {
-                enemigo.mover();
+            
+            	if (!(abs(enemigo.getX() - jugador->getX()) <= 1 &&
+                      abs(enemigo.getY() - jugador->getY()) <= 1 &&
+                      !(enemigo.getX() == jugador->getX() && enemigo.getY() == jugador->getY()))) {
+                    enemigo.mover();
+                }
+            
                 enemigo.prepararAtaque();
                 if (enemigo.estaAtacando() &&
                     (enemigo.getX() - jugador->getX()) * (enemigo.getX() - jugador->getX()) <= 1 &&
@@ -142,7 +162,13 @@ void Juego::iniciar() {
             }
 
             Boss& jefe = salaJefe->obtenerJefe();
-            jefe.mover();
+            
+            if (!(abs(jefe.getX() - jugador->getX()) <= 1 &&
+                      abs(jefe.getY() - jugador->getY()) <= 1 &&
+                      !(jefe.getX() == jugador->getX() && jefe.getY() == jugador->getY()))) {
+                    jefe.mover();
+                }
+            
             jefe.prepararAtaque();
             if (jefe.estaAtacando() &&
                 (jefe.getX() - jugador->getX()) * (jefe.getX() - jugador->getX()) <= 1 &&
@@ -162,3 +188,4 @@ void Juego::iniciar() {
         }
     }
 }
+

@@ -30,8 +30,8 @@ Boss::Boss(
 void Boss::mover() {
 	if (!patronMovimiento.empty()) {
 	pasoActual = (pasoActual + 1) % patronMovimiento.size();
-	x = xOriginal + patronMovimiento[pasoActual].first;
-	y = yOriginal + patronMovimiento[pasoActual].second;
+	x = xOriginal + patronMovimiento[pasoActual].second;
+	y = yOriginal + patronMovimiento[pasoActual].first;
 	}
 }
 
